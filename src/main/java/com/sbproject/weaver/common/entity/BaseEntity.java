@@ -1,6 +1,7 @@
 package com.sbproject.weaver.common.entity;
 
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,8 +22,8 @@ import java.util.UUID;
 @EntityListeners(AuditingEntityListener.class)
 @SuperBuilder
 public abstract class BaseEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     private UUID id;
 
@@ -37,4 +38,11 @@ public abstract class BaseEntity {
             nullable = false,
             columnDefinition = "timestamp with time zone default now()")
     private Instant updatedAt;
+
+    @PrePersist
+    public void generateId() {
+        if (this.id == null) {
+            this.id = UuidCreator.getTimeOrderedEpoch();
+        }
+    }
 }
