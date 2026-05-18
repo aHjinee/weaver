@@ -15,11 +15,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Entity
 @Table(name = "departments")
-@Getter @Builder
+@Getter @Setter @Builder
 @ToString
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,8 +38,10 @@ public class DepartmentEntity {
 
   @Column(unique = true,nullable = false)
   private String name;
+
   @Column(unique = true,nullable = false)
   private String description;
+
   @Column(nullable = false)
   private LocalDate establishedDate;
 
