@@ -15,17 +15,40 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.querydsl.core.types.ExpressionUtils.as;
 
 @Repository
 @RequiredArgsConstructor
-public class DepartmentRepositoryImpl implements DepartmentRepository{
+public class DepartmentRepositoryGet implements DepartmentRepository{
     private final JPAQueryFactory queryFactory;
 
     private static final QDepartment d = QDepartment.department;
     private static final QEmployee e = QEmployee.employee; // TODO : employee를 join해야 부서에 인원 수 표기 가능!!!!!!!
+
+    @Override
+    public Optional<DepartmentDto> findById(UUID id) {
+        DepartmentDto result = queryFactory
+                .select(Projections.fields(DepartmentDto.class,
+                        d.id,
+                        d.name,
+                        d.description,
+                        d.establishedDate,
+                        as(
+                                JPAExpressions
+                                        .select(e.count().intValue())
+                                        .from(e)
+                                        .where(e.department.id.eq(d.id)),
+                                "employeeCount"
+                        )
+                ))
+                .from(d)
+                .where(d.id.eq(id))
+                .fetchOne();
+        return Optional.ofNullable(result);
+    }
 
     @Override
     public Slice<DepartmentDto> searchSlice(UUID cursor, int size, DepartmentSearchRequest search) {
