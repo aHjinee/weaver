@@ -14,19 +14,19 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 public class DepartmentDto {
-    private UUID id;
-    private String name;
-    private String description;
-    private LocalDate establishedDate;
-    private int employeeCount;
+  private UUID id;
+  private String name;
+  private String description;
+  private LocalDate establishedDate;
+  private int employeeCount;
 
-    public static DepartmentDto from(Department department) {
-        return DepartmentDto.builder()
-                .id(department.getId())
-                .name(department.getName())
-                .description(department.getDescription())
-                .establishedDate(department.getEstablishedDate())
-                .employeeCount(0) // 임시 나중에 채워야함 !!!!!!!!!!!!!
-                .build();
-    }
+  public static DepartmentDto from(Department department) {
+    return DepartmentDto.builder()
+        .id(department.getId())
+        .name(department.getName())
+        .description(department.getDescription())
+        .establishedDate(department.getEstablishedDate())
+        .employeeCount(0) // 임시 나중에 채워야함 !!!!!!!!!!!!!
+        .build();
+  }
 }

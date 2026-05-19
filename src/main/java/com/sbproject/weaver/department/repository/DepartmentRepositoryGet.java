@@ -7,9 +7,13 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sbproject.weaver.common.dto.CursorPageResponse;
 import com.sbproject.weaver.department.dto.DepartmentDto;
 import com.sbproject.weaver.department.dto.DepartmentSearchRequest;
+import com.sbproject.weaver.department.entity.Department;
 import com.sbproject.weaver.department.entity.QDepartment;
 import com.sbproject.weaver.employee.entity.QEmployee;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,7 +24,7 @@ import static com.querydsl.core.types.ExpressionUtils.as;
 
 @Repository
 @RequiredArgsConstructor
-public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository {
+public class DepartmentRepositoryGet implements DepartmentRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     private static final QDepartment d = QDepartment.department;
@@ -102,7 +106,6 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
                 .nextIdAfter(0L)
                 .totalElements(countSearch(search))
                 .build();
-
     }
 
     @Override
@@ -121,4 +124,7 @@ public class DepartmentQueryRepositoryImpl implements DepartmentQueryRepository 
 
         return totalElements != null ? totalElements : 0L;
     }
+
+
+
 }

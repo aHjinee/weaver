@@ -4,6 +4,7 @@ import com.sbproject.weaver.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -16,17 +17,22 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Department extends BaseEntity {
 
-    @Column(nullable = false, unique = true, length = 100)
-    private String name;
+  @Column(nullable = false, unique = true, length = 100)
+  private String name;
 
-    @Column()
-    private String description;
+  @Column()
+  private String description;
 
-    @Column(name = "established_date", nullable = false)
-    private LocalDate establishedDate;
+  @Column(name = "established_date", nullable = false)
+  private LocalDate establishedDate;
 
-    @Column()
-    private int employeeCount;
+  public void update(String name, String description, LocalDate establishedDate) {
+    this.name = name;
+    this.description = description;
+    this.establishedDate = establishedDate;
+  }
+
+
 }
 
 //CREATE TABLE departments (
