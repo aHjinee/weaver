@@ -11,9 +11,6 @@ import com.sbproject.weaver.backup.entity.BackupStatus;
 import com.sbproject.weaver.backup.entity.QBackupEntity;
 import com.sbproject.weaver.file.entity.QFileEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,7 +22,7 @@ public class BackupRepositoryImpl implements BackupRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Page<BackupDto> findBackups(
+    public List<BackupDto> findBackups(
             String worker,
             BackupStatus status,
             Instant from,
@@ -33,7 +30,7 @@ public class BackupRepositoryImpl implements BackupRepositoryCustom {
             String cursor,
             String direction,
             String sortField,
-            Pageable pageable
+            int limit
     ) {
         QBackupEntity backup = QBackupEntity.backupEntity;
         QFileEntity file = QFileEntity.fileEntity;
@@ -96,7 +93,7 @@ public class BackupRepositoryImpl implements BackupRepositoryCustom {
             }
         }
 
-        List<BackupDto> content = queryFactory
+        return queryFactory
                 .select(Projections.constructor(
                         BackupDto.class,
                         backup.id,
@@ -113,12 +110,25 @@ public class BackupRepositoryImpl implements BackupRepositoryCustom {
                         new OrderSpecifier<>(order, sortPath),
                         new OrderSpecifier<>(order, backup.id)
                 )
-                .limit(pageable.getPageSize())
+                .limit(limit)
                 .fetch();
-
-        return new PageImpl<>(content, pageable, content.size());
     }
 
-    private record BackupCursor(UUID id, Instant sortValue) {
+    public static class BackupCursor {
+        private final UUID id;
+        private final Instant sortValue;
+
+        public BackupCursor(UUID id, Instant sortValue) {
+            this.id = id;
+            this.sortValue = sortValue;
+        }
+
+        public UUID id() {
+            return id;
+        }
+
+        public Instant sortValue() {
+            return sortValue;
+        }
     }
 }

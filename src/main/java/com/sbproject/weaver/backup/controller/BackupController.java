@@ -24,7 +24,7 @@ public class BackupController {
             @RequestParam(required = false) BackupStatus status,
             @RequestParam(required = false) String startedAtFrom,
             @RequestParam(required = false) String startedAtTo,
-            @RequestParam(required = false) Long idAfter,
+            @RequestParam(required = false) String idAfter,
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "startedAt") String sortField,
@@ -51,7 +51,8 @@ public class BackupController {
 
     @GetMapping("/latest")
     public ResponseEntity<BackupDto> getLatestBackup(
-            @RequestParam(value = "status", required = false, defaultValue = "COMPLETED") BackupStatus status) {
+            @RequestParam(value = "status", required = false, defaultValue = "COMPLETED") BackupStatus status
+    ) {
         BackupDto latestBackup = backupService.getLatestBackup(status);
         return ResponseEntity.status(HttpStatus.OK).body(latestBackup);
     }

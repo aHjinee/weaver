@@ -2,14 +2,13 @@ package com.sbproject.weaver.backup.repository;
 
 import com.sbproject.weaver.backup.dto.BackupDto;
 import com.sbproject.weaver.backup.entity.BackupStatus;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.time.Instant;
+import java.util.List;
 
 public interface BackupRepositoryCustom {
 
-    Page<BackupDto> findBackups(
+    List<BackupDto> findBackups(
             String worker,
             BackupStatus status,
             Instant from,
@@ -17,6 +16,6 @@ public interface BackupRepositoryCustom {
             String cursor,
             String direction,
             String sortField,
-            Pageable pageable
+            int limit
     );
 }

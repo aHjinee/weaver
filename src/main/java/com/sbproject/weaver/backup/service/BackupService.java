@@ -113,7 +113,7 @@ public class BackupService {
             String from,
             String to,
             String cursor,
-            Long idAfter,
+            String idAfter,
             int size,
             String sortField,
             String sortDirection
@@ -121,22 +121,28 @@ public class BackupService {
         Instant fromInstant = parseInstantOrNull(from);
         Instant toInstant = parseInstantOrNull(to);
 
-        PageRequest pageable = PageRequest.of(0, size);
+        String activeCursor = cursor != null && !cursor.isBlank()
+                ? cursor
+                : idAfter;
 
-        Page<BackupDto> page = backupRepository.findBackups(
+        int limit = size + 1;
+
+        List<BackupDto> fetched = backupRepository.findBackups(
                 worker,
                 status,
                 fromInstant,
                 toInstant,
-                cursor,
+                activeCursor,
                 sortDirection,
                 sortField,
-                pageable
+                limit
         );
 
-        List<BackupDto> content = page.getContent();
+        boolean hasNext = fetched.size() > size;
 
-        boolean hasNext = content.size() == size;
+        List<BackupDto> content = hasNext
+                ? fetched.subList(0, size)
+                : fetched;
 
         String nextCursor = null;
 
@@ -150,7 +156,7 @@ public class BackupService {
                 .nextCursor(nextCursor)
                 .nextIdAfter(null)
                 .size(size)
-                .totalElements(page.getTotalElements())
+                .totalElements(content.size())
                 .hasNext(hasNext)
                 .build();
     }
