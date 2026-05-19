@@ -32,7 +32,6 @@ public abstract class BaseEntity {
             updatable = false, nullable = false)
     private Instant createdAt;
 
-
     @LastModifiedDate
     @Column(name = "updated_at",
             nullable = false,
