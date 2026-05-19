@@ -6,15 +6,10 @@ import com.sbproject.weaver.department.entity.Department;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface DepartmentRepository extends JpaRepository<Department, UUID> {
-
-  Boolean existsByName(String name);
-
-
-
+public interface DepartmentRepositoryCustom {
+  Optional<DepartmentDto> findById(UUID id);
+  Slice<DepartmentDto> searchSlice(UUID cursor, int size, DepartmentSearchRequest search);
+  long countSearch(DepartmentSearchRequest search);
 
 }

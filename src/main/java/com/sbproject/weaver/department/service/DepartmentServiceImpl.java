@@ -1,19 +1,31 @@
 package com.sbproject.weaver.department.service;
 
 import com.sbproject.weaver.department.dto.CreateRequest;
+import com.sbproject.weaver.department.dto.CursorPageResponseDepartmentDto;
 import com.sbproject.weaver.department.dto.DepartmentDto;
+import com.sbproject.weaver.department.dto.DepartmentSearchRequest;
 import com.sbproject.weaver.department.entity.Department;
 import com.sbproject.weaver.department.repository.DepartmentRepository;
+import com.sbproject.weaver.department.repository.DepartmentRepositoryCustom;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
 
+  private final DepartmentRepositoryCustom departmentRepositoryCustom;
   private final DepartmentRepository departmentRepository;
 
+  @Transactional
+  public CursorPageResponseDepartmentDto findSlice(UUID cursor, int size, DepartmentSearchRequest search){
+      Slice<DepartmentDto> slice = departmentRepositoryCustom.searchSlice(cursor, size, search);
+      long totalElements = departmentRepositoryCustom.countSearch(search);
+      return CursorPageResponseDepartmentDto.from(slice, size, totalElements);
+  }
 
   @Override
   public DepartmentDto create(CreateRequest request) {
@@ -74,13 +86,13 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   public DepartmentDto delete(UUID id) {
-    Department entity = departmentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Department not found"));
-    if(entity.getEmployeeCount() != 0){
+    DepartmentDto dto = departmentRepositoryCustom.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 부서를 찾을 수 없습니다."));
+    if(dto.getEmployeeCount() > 0) {
       throw new IllegalArgumentException("소속되어있는 직원이 있어 부서를 삭제할 수 없습니다.");
     }
     else departmentRepository.deleteById(id);
 
-    return  DepartmentDto.from(entity);
+    return  dto;
   }
 
 }

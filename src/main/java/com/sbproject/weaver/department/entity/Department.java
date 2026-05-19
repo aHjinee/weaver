@@ -4,6 +4,7 @@ import com.sbproject.weaver.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -25,8 +26,6 @@ public class Department extends BaseEntity {
   @Column(name = "established_date", nullable = false)
   private LocalDate establishedDate;
 
-  @Column()
-  private int employeeCount;
 }
 
 //CREATE TABLE departments (
