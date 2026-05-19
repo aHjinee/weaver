@@ -15,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +63,7 @@ public class BackupService {
                     LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
             );
 
-            FileEntity savedFile = fileService.save(
+            FileEntity savedFile = fileService.saveBytes(
                     fileName,
                     "text/csv",
                     csvFile,
@@ -83,7 +81,7 @@ public class BackupService {
                     LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
             );
 
-            FileEntity errorFile = fileService.save(
+            FileEntity errorFile = fileService.saveBytes(
                     fileName,
                     "text/plain",
                     errorLog,
@@ -92,6 +90,7 @@ public class BackupService {
 
             backup.fail(Instant.now(), errorFile);
         }
+
         backupRepository.save(backup);
         return backupMapper.toBackupDto(backup);
     }

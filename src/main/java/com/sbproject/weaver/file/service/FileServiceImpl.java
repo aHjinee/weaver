@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.IOException;
 import java.time.Instant;
 import java.util.NoSuchElementException;
@@ -28,31 +27,30 @@ public class FileServiceImpl implements FileService {
     private final FileMapper fileMapper;
 
     @Override
-    @Transactional
-    public FileEntity save(MultipartFile multipartFile, FilePurpose purpose) {
-        if(multipartFile == null || multipartFile.isEmpty()) {
+    public FileEntity saveMultipartFile(MultipartFile multipartFile, FilePurpose purpose) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
             throw new IllegalArgumentException("빈 파일은 저장할 수 없습니다.");
         }
 
         try {
-        return save(
-                multipartFile.getOriginalFilename(),
-                multipartFile.getContentType(),
-                multipartFile.getBytes(),
-                purpose);
+            return saveBytes(
+                    multipartFile.getOriginalFilename(),
+                    multipartFile.getContentType(),
+                    multipartFile.getBytes(),
+                    purpose
+            );
         } catch (IOException e) {
             throw new RuntimeException("파일 읽기를 실패하였습니다.", e);
         }
     }
 
     @Override
-    @Transactional
-    public FileEntity save(String originalName, String contentType, byte[] bytes, FilePurpose purpose) {
+    public FileEntity saveBytes(String originalName, String contentType, byte[] bytes, FilePurpose purpose) {
         if (purpose == null) {
             throw new IllegalArgumentException("파일 용도는 필수입니다.");
         }
 
-        if(originalName == null || originalName.isBlank()) {
+        if (originalName == null || originalName.isBlank()) {
             throw new IllegalArgumentException("파일명이 비어 있습니다.");
         }
 
@@ -96,7 +94,6 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    @Transactional
     public void delete(UUID fileId) {
         FileEntity fileEntity = getFileOrThrow(fileId);
 

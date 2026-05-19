@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public interface FileService {
 
-    FileEntity save(MultipartFile multipartFile, FilePurpose purpose);
+    FileEntity saveMultipartFile(MultipartFile multipartFile, FilePurpose purpose);
 
-    FileEntity save(String originalName, String contentType, byte[] bytes, FilePurpose purpose);
+    FileEntity saveBytes(String originalName, String contentType, byte[] bytes, FilePurpose purpose);
 
     FileResponse findById(UUID fileId);
 
