@@ -1,0 +1,91 @@
+package com.sbproject.weaver.department.repository;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sbproject.weaver.department.dto.DepartmentDto;
+import com.sbproject.weaver.department.dto.DepartmentSearchRequest;
+import com.sbproject.weaver.department.entity.QDepartment;
+import com.sbproject.weaver.employee.entity.QEmployee;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.UUID;
+
+import static com.querydsl.core.types.ExpressionUtils.as;
+
+@Repository
+@RequiredArgsConstructor
+public class DepartmentRepositoryImpl implements DepartmentRepository{
+    private final JPAQueryFactory queryFactory;
+
+    private static final QDepartment d = QDepartment.department;
+    private static final QEmployee e = QEmployee.employee; // TODO : employee를 join해야 부서에 인원 수 표기 가능!!!!!!!
+
+    @Override
+    public Slice<DepartmentDto> searchSlice(UUID cursor, int size, DepartmentSearchRequest search) {
+
+        BooleanBuilder where = new BooleanBuilder();
+        boolean isDesc = "desc".equals(search.getSortDirection());
+        if (cursor != null) {
+            if (isDesc){
+                where.and(d.id.lt(cursor));
+            } else {
+                where.and(d.id.gt(cursor));
+            }
+
+        }
+        String keyword = search.getNameOrDescription();
+        if (keyword!= null && !keyword.isBlank()) {
+            where.and(d.name.containsIgnoreCase(keyword)
+                    .or(d.description.containsIgnoreCase(keyword)));
+        }
+
+        List<DepartmentDto> rows = queryFactory
+                .select(Projections.fields(DepartmentDto.class,
+                        d.id,
+                        d.name,
+                        d.description,
+                        d.establishedDate,
+                        as(
+                                JPAExpressions
+                                        .select(e.count().intValue())
+                                        .from(e)
+                                        .where(e.department.id.eq(d.id)),
+                                "employeeCount"
+                        )
+                ))
+                .from(d)
+                .where(where)
+                .orderBy(isDesc ? d.id.desc() : d.id.asc())
+                .limit(size + 1L)
+                .fetch();
+
+        boolean hasNext = rows.size() > size;
+        List<DepartmentDto> content = hasNext ? rows.subList(0, size) : rows;
+
+        return new SliceImpl<>(content, PageRequest.ofSize(size), hasNext);
+    }
+
+    @Override
+    public long countSearch(DepartmentSearchRequest search) {
+        BooleanBuilder where = new BooleanBuilder();
+        String keyword = search.getNameOrDescription();
+        if (keyword!= null && !keyword.isBlank()) {
+            where.and(d.name.containsIgnoreCase(keyword)
+                    .or(d.description.containsIgnoreCase(keyword)));
+        }
+        Long totalElements = queryFactory
+                .select(d.count())
+                .from(d)
+                .where(where)
+                .fetchOne();
+
+        return totalElements != null ? totalElements : 0L;
+    }
+}
