@@ -1,4 +1,4 @@
-package com.sbproject.weaver.scheduler;
+package com.sbproject.weaver.backup.scheduler;
 
 import com.sbproject.weaver.backup.service.BackupService;
 import lombok.RequiredArgsConstructor;
