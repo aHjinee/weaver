@@ -83,7 +83,7 @@ public class DepartmentServiceImpl implements DepartmentService {
   public DepartmentDto delete(UUID id) {
     DepartmentDto dto = departmentRepositoryCustom.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 부서를 찾을 수 없습니다."));
     if(dto.getEmployeeCount() > 0) {
-      throw new IllegalArgumentException("소속되어있는 직원이 있어 부서를 삭제할 수 없습니다.");
+      throw new IllegalStateException("소속 직원이 있는 부서는 삭제할 수 없습니다");
     }
     else departmentRepository.deleteById(id);
 
