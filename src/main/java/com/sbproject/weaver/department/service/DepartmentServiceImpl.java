@@ -90,4 +90,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     return  dto;
   }
 
+  @Override
+  public DepartmentDto findById(UUID id) {
+    return departmentRepositoryCustom.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("부서를 찾을 수 없습니다. ID: " + id));
+  }
 }

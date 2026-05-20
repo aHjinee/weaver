@@ -12,4 +12,5 @@ public interface DepartmentService {
   DepartmentDto create(CreateRequest request);
   DepartmentDto update(UUID id, CreateRequest request);
   DepartmentDto delete(UUID id);
+  DepartmentDto findById(UUID id);
 }

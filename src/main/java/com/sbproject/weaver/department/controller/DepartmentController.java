@@ -64,5 +64,10 @@ public class DepartmentController {
         .body(deleteDepartment);
   }
 
+  @GetMapping("/{id}")
+  public ResponseEntity<DepartmentDto> getDepartmentDetail(@PathVariable UUID id) {
+    DepartmentDto department = departmentService.findById(id);
+    return ResponseEntity.ok(department);
+  }
 
 }

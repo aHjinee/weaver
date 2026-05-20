@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "backup_histories")
-@Getter @ToString(exclude = "file")
+@Getter
+@ToString(exclude = "file")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
