@@ -182,7 +182,7 @@ public class BackupServiceImpl implements BackupService {
                         employee.getEmployeeNumber(),
                         employee.getName(),
                         employee.getEmail(),
-                        employee.getDepartmentId(),
+                        employee.getDepartment().getId(),
                         employee.getPosition(),
                         employee.getHireDate(),
                         employee.getStatus()

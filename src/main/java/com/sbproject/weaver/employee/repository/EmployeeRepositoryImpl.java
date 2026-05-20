@@ -7,9 +7,12 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sbproject.weaver.common.dto.CursorPageResponse;
 import com.sbproject.weaver.department.entity.QDepartment;
+import com.sbproject.weaver.employee.dto.EmployeeDistributionDto;
 import com.sbproject.weaver.employee.dto.EmployeeDto;
 import com.sbproject.weaver.employee.dto.EmployeeSearchCondition;
+import com.sbproject.weaver.employee.dto.EmployeeSearchDistribution;
 import com.sbproject.weaver.employee.entity.Employee;
+import com.sbproject.weaver.employee.entity.EmployeeStatus;
 import com.sbproject.weaver.employee.entity.QEmployee;
 import com.sbproject.weaver.file.entity.QFileEntity;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+import com.querydsl.core.types.dsl.StringExpression;
 
 @RequiredArgsConstructor
 public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
@@ -219,5 +223,44 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
         }
 
         return cursorBuilder;
+    }
+
+    @Override
+    public List<EmployeeDistributionDto> distribution(EmployeeSearchDistribution searchDistribution) {
+        QEmployee employee = QEmployee.employee;
+        QDepartment department = QDepartment.department;
+
+        String groupBy = (searchDistribution.getGroupBy() == null || searchDistribution.getGroupBy().isBlank())
+                ? "department" : searchDistribution.getGroupBy();
+
+        StringExpression groupPath = "position".equals(groupBy)
+                ? employee.position
+                : department.name;
+
+        EmployeeStatus status = searchDistribution.getStatus() != null
+                ? searchDistribution.getStatus()
+                : EmployeeStatus.ACTIVE;
+
+        Long totalCount = queryFactory
+                .select(employee.count())
+                .from(employee)
+                .join(employee.department, department)
+                .where(employee.status.eq(status))
+                .fetchOne();
+
+        if (totalCount == null || totalCount == 0) return List.of();
+
+        return queryFactory
+                .select(Projections.constructor(
+                        EmployeeDistributionDto.class,
+                        groupPath,
+                        employee.count(),
+                        employee.count().doubleValue().multiply(100).divide(totalCount)
+                ))
+                .from(employee)
+                .join(employee.department, department)
+                .where(employee.status.eq(status))
+                .groupBy(groupPath)
+                .fetch();
     }
 }
