@@ -18,4 +18,11 @@ public interface BackupRepositoryCustom {
             String sortField,
             int limit
     );
+
+    long countBackups(
+            String worker,
+            BackupStatus status,
+            Instant from,
+            Instant to
+    );
 }

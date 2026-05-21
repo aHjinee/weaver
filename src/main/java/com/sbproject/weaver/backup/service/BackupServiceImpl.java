@@ -36,6 +36,7 @@ public class BackupServiceImpl implements BackupService {
     private final FileService fileService;
     private final BackupMapper backupMapper;
 
+    @Override
     @Transactional
     public BackupDto runBackup(String worker) {
         BackupEntity backup = BackupEntity.builder()
@@ -57,6 +58,7 @@ public class BackupServiceImpl implements BackupService {
 
         try {
             byte[] csvFile = createCsvFile();
+
             String fileName = String.format(
                     "employee_backup_%s_%s.csv",
                     backup.getId().toString().substring(0, 8),
@@ -71,13 +73,15 @@ public class BackupServiceImpl implements BackupService {
             );
 
             backup.complete(Instant.now(), savedFile);
+
         } catch (Exception e) {
             log.error("백업 작업 중 오류 발생", e);
 
             byte[] errorLog = e.toString().getBytes(StandardCharsets.UTF_8);
 
             String fileName = String.format(
-                    "error_%s.log",
+                    "backup_error_%s_%s.log",
+                    backup.getId().toString().substring(0, 8),
                     LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"))
             );
 
@@ -91,8 +95,8 @@ public class BackupServiceImpl implements BackupService {
             backup.fail(Instant.now(), errorFile);
         }
 
-        backupRepository.save(backup);
-        return backupMapper.toBackupDto(backup);
+        BackupEntity savedBackup = backupRepository.save(backup);
+        return backupMapper.toBackupDto(savedBackup);
     }
 
     @Transactional(readOnly = true)
@@ -148,12 +152,19 @@ public class BackupServiceImpl implements BackupService {
             nextCursor = last.getId().toString();
         }
 
+        long totalElements = backupRepository.countBackups(
+                worker,
+                status,
+                fromInstant,
+                toInstant
+        );
+
         return CursorPageResponse.<BackupDto>builder()
                 .content(content)
                 .nextCursor(nextCursor)
                 .nextIdAfter(null)
                 .size(size)
-                .totalElements(content.size())
+                .totalElements(totalElements)
                 .hasNext(hasNext)
                 .build();
     }
@@ -182,7 +193,7 @@ public class BackupServiceImpl implements BackupService {
                         employee.getEmployeeNumber(),
                         employee.getName(),
                         employee.getEmail(),
-                        employee.getDepartmentId(),
+                        employee.getDepartment().getId(),
                         employee.getPosition(),
                         employee.getHireDate(),
                         employee.getStatus()

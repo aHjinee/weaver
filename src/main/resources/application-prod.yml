@@ -1,14 +1,16 @@
 spring:
   sql:
     init:
-      mode: always   # 항상 data.sql 실행 # 위험한 옵션!! 개발 DB가 모두 날라갈수 있음으로 주의!
+      mode: never
       schema-locations: classpath:hrbank_schema_latest_erd.sql
+      data-locations: classpath:data.sql
+
   config:
     activate:
       on-profile: prod
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/my_blog
+    url: jdbc:postgresql://localhost:5432/waever1
     driver-class-name: org.postgresql.Driver
     username: user1
     password: 1234
@@ -20,6 +22,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          time_zone: UTC
 
 logging:
   level:

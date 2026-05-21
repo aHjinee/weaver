@@ -1,6 +1,6 @@
 -- data.sql
 -- 기준:
--- - 테스트 목적: 목록 조회, 단건 조회, 필터/검색, 정렬, 상태별 조회, 변경 이력, 백업 성공/실패/진행중 확인
+-- - 테스트 목적: 목록 조회, 단건 조회, 필터/검색, 정렬, 상태별 조회, 변경 이력, 백업 성공/실패/건너뜀 확인
 -- - employee_change_logs는 employees FK 없음
 -- - employee_change_diffs만 employee_change_logs를 FK로 참조
 -- - employees.profile_image_id, backup_histories.file_id는 files를 참조
@@ -58,56 +58,56 @@ INSERT INTO departments (
           '개발팀',
           '백엔드, 프론트엔드, 인프라 개발을 담당하는 부서',
           DATE '2019-06-15',
-          TIMESTAMP '2026-05-01 09:00:00',
-          TIMESTAMP '2026-05-01 09:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:00:00+09:00'
       ),
       (
           '018f6b7a-1000-7000-8000-000000000002',
           '인사팀',
           '채용, 평가, 보상, 직원 관리를 담당하는 부서',
           DATE '2018-03-01',
-          TIMESTAMP '2026-05-01 09:05:00',
-          TIMESTAMP '2026-05-01 09:05:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:05:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:05:00+09:00'
       ),
       (
           '018f6b7a-1000-7000-8000-000000000003',
           '마케팅팀',
           '브랜드, 콘텐츠, 퍼포먼스 마케팅을 담당하는 부서',
           DATE '2021-04-20',
-          TIMESTAMP '2026-05-01 09:10:00',
-          TIMESTAMP '2026-05-01 09:10:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:10:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:10:00+09:00'
       ),
       (
           '018f6b7a-1000-7000-8000-000000000004',
           '디자인팀',
           '서비스 UI/UX와 브랜드 디자인을 담당하는 부서',
           DATE '2020-01-10',
-          TIMESTAMP '2026-05-01 09:15:00',
-          TIMESTAMP '2026-05-01 09:15:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:15:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:15:00+09:00'
       ),
       (
           '018f6b7a-1000-7000-8000-000000000005',
           '운영팀',
           '서비스 운영과 고객 대응을 담당하는 부서',
           DATE '2022-09-01',
-          TIMESTAMP '2026-05-01 09:20:00',
-          TIMESTAMP '2026-05-01 09:20:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:20:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:20:00+09:00'
       ),
       (
           '018f6b7a-1000-7000-8000-000000000006',
           '재무팀',
           '회계, 정산, 예산 관리를 담당하는 부서',
           DATE '2017-11-01',
-          TIMESTAMP '2026-05-01 09:25:00',
-          TIMESTAMP '2026-05-01 09:25:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:25:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:25:00+09:00'
       ),
       (
           '018f6b7a-1000-7000-8000-000000000007',
           '법무팀',
           '계약, 컴플라이언스, 법률 검토를 담당하는 부서. 직원 없음 테스트용',
           DATE '2024-01-01',
-          TIMESTAMP '2026-05-01 09:30:00',
-          TIMESTAMP '2026-05-01 09:30:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:30:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 09:30:00+09:00'
       );
 
 -- =========================================================
@@ -130,7 +130,7 @@ INSERT INTO files (
     'image/png',
     152034,
     'storage/profiles/018f6b7a-2000-7000-8000-000000000001_kim-minjun-profile.png',
-    TIMESTAMP '2026-05-01 09:40:00'
+    TIMESTAMP WITH TIME ZONE '2026-05-01 09:40:00+09:00'
 ),
 (
     '018f6b7a-2000-7000-8000-000000000002',
@@ -138,7 +138,7 @@ INSERT INTO files (
     'image/jpeg',
     204812,
     'storage/profiles/018f6b7a-2000-7000-8000-000000000002_lee-seoyeon-profile.jpg',
-    TIMESTAMP '2026-05-01 09:41:00'
+    TIMESTAMP WITH TIME ZONE '2026-05-01 09:41:00+09:00'
 ),
 (
     '018f6b7a-2000-7000-8000-000000000003',
@@ -146,7 +146,7 @@ INSERT INTO files (
     'image/png',
     180330,
     'storage/profiles/018f6b7a-2000-7000-8000-000000000003_park-jihoon-profile.png',
-    TIMESTAMP '2026-05-01 09:42:00'
+    TIMESTAMP WITH TIME ZONE '2026-05-01 09:42:00+09:00'
 ),
 (
     '018f6b7a-2000-7000-8000-000000000004',
@@ -154,7 +154,7 @@ INSERT INTO files (
     'image/webp',
     98012,
     'storage/profiles/018f6b7a-2000-7000-8000-000000000004_choi-yujin-profile.webp',
-    TIMESTAMP '2026-05-01 09:43:00'
+    TIMESTAMP WITH TIME ZONE '2026-05-01 09:43:00+09:00'
 ),
 (
     '018f6b7a-2000-7000-8000-000000000005',
@@ -162,7 +162,7 @@ INSERT INTO files (
     'image/png',
     123456,
     'storage/profiles/018f6b7a-2000-7000-8000-000000000005_han-jimin-profile.png',
-    TIMESTAMP '2026-05-01 09:44:00'
+    TIMESTAMP WITH TIME ZONE '2026-05-01 09:44:00+09:00'
 ),
 
 -- backup csv files
@@ -172,7 +172,7 @@ INSERT INTO files (
     'text/csv',
     4096,
     'storage/backups/employees-backup-20260515-090000.csv',
-    TIMESTAMP '2026-05-15 09:00:30'
+    TIMESTAMP WITH TIME ZONE '2026-05-15 09:00:30+09:00'
 ),
 (
     '018f6b7a-2000-7000-8000-000000000102',
@@ -180,7 +180,7 @@ INSERT INTO files (
     'text/csv',
     5120,
     'storage/backups/employees-backup-20260516-090000.csv',
-    TIMESTAMP '2026-05-16 09:00:35'
+    TIMESTAMP WITH TIME ZONE '2026-05-16 09:00:35+09:00'
 ),
 
 -- failed backup log files
@@ -190,7 +190,7 @@ INSERT INTO files (
     'text/plain',
     1024,
     'storage/backups/backup-error-20260515-100000.log',
-    TIMESTAMP '2026-05-15 10:00:30'
+    TIMESTAMP WITH TIME ZONE '2026-05-15 10:00:30+09:00'
 ),
 (
     '018f6b7a-2000-7000-8000-000000000202',
@@ -198,7 +198,7 @@ INSERT INTO files (
     'text/plain',
     1536,
     'storage/backups/backup-error-20260517-030000.log',
-    TIMESTAMP '2026-05-17 03:00:40'
+    TIMESTAMP WITH TIME ZONE '2026-05-17 03:00:40+09:00'
 ),
 
 -- unreferenced file for file download / orphan metadata check
@@ -208,7 +208,7 @@ INSERT INTO files (
     'application/pdf',
     300000,
     'storage/files/sample-policy.pdf',
-    TIMESTAMP '2026-05-11 11:00:00'
+    TIMESTAMP WITH TIME ZONE '2026-05-11 11:00:00+09:00'
 );
 
 -- =========================================================
@@ -232,12 +232,12 @@ INSERT INTO employees (
           'minjun.kim@hrbank.com',
           'EMP-2026-0001',
           '018f6b7a-1000-7000-8000-000000000001',
-          '018f6b7a-2000-7000-8000-000000000001',
+          NULL,
           '백엔드 개발자',
           DATE '2023-03-01',
           'ACTIVE',
-          TIMESTAMP '2026-05-01 10:00:00',
-          TIMESTAMP '2026-05-10 11:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-10 11:00:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000002',
@@ -245,12 +245,12 @@ INSERT INTO employees (
           'seoyeon.lee@hrbank.com',
           'EMP-2026-0002',
           '018f6b7a-1000-7000-8000-000000000002',
-          '018f6b7a-2000-7000-8000-000000000002',
+          NULL,
           '인사 매니저',
           DATE '2022-07-15',
           'ACTIVE',
-          TIMESTAMP '2026-05-01 10:01:00',
-          TIMESTAMP '2026-05-01 10:01:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:01:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:01:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000003',
@@ -258,12 +258,12 @@ INSERT INTO employees (
           'jihoon.park@hrbank.com',
           'EMP-2026-0003',
           '018f6b7a-1000-7000-8000-000000000004',
-          '018f6b7a-2000-7000-8000-000000000003',
+          NULL,
           'UX 디자이너',
           DATE '2024-01-10',
           'ON_LEAVE',
-          TIMESTAMP '2026-05-01 10:02:00',
-          TIMESTAMP '2026-05-12 14:30:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:02:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-12 14:30:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000004',
@@ -271,12 +271,12 @@ INSERT INTO employees (
           'yujin.choi@hrbank.com',
           'EMP-2026-0004',
           '018f6b7a-1000-7000-8000-000000000003',
-          '018f6b7a-2000-7000-8000-000000000004',
+          NULL,
           '마케팅 담당자',
           DATE '2021-11-05',
           'ACTIVE',
-          TIMESTAMP '2026-05-01 10:03:00',
-          TIMESTAMP '2026-05-01 10:03:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:03:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:03:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000005',
@@ -288,8 +288,8 @@ INSERT INTO employees (
           '운영 매니저',
           DATE '2020-05-20',
           'RESIGNED',
-          TIMESTAMP '2026-05-01 10:04:00',
-          TIMESTAMP '2026-05-13 17:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:04:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-13 17:00:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000006',
@@ -297,12 +297,12 @@ INSERT INTO employees (
           'jimin.han@hrbank.com',
           'EMP-2026-0006',
           '018f6b7a-1000-7000-8000-000000000001',
-          '018f6b7a-2000-7000-8000-000000000005',
+          NULL,
           '프론트엔드 개발자',
           DATE '2025-02-03',
           'ACTIVE',
-          TIMESTAMP '2026-05-01 10:05:00',
-          TIMESTAMP '2026-05-01 10:05:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:05:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:05:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000007',
@@ -314,8 +314,8 @@ INSERT INTO employees (
           'DevOps 엔지니어',
           DATE '2024-08-12',
           'ACTIVE',
-          TIMESTAMP '2026-05-01 10:06:00',
-          TIMESTAMP '2026-05-01 10:06:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:06:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:06:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000008',
@@ -327,8 +327,8 @@ INSERT INTO employees (
           '채용 담당자',
           DATE '2026-05-02',
           'ACTIVE',
-          TIMESTAMP '2026-05-02 10:00:00',
-          TIMESTAMP '2026-05-02 10:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:00:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000009',
@@ -340,8 +340,8 @@ INSERT INTO employees (
           '재무 분석가',
           DATE '2022-02-14',
           'ACTIVE',
-          TIMESTAMP '2026-05-02 10:05:00',
-          TIMESTAMP '2026-05-02 10:05:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:05:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:05:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000010',
@@ -353,8 +353,8 @@ INSERT INTO employees (
           '콘텐츠 마케터',
           DATE '2023-09-18',
           'ON_LEAVE',
-          TIMESTAMP '2026-05-02 10:10:00',
-          TIMESTAMP '2026-05-14 16:20:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:10:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-14 16:20:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000011',
@@ -366,8 +366,8 @@ INSERT INTO employees (
           '백엔드 개발자',
           DATE '2026-01-05',
           'ACTIVE',
-          TIMESTAMP '2026-05-03 09:00:00',
-          TIMESTAMP '2026-05-03 09:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-03 09:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-03 09:00:00+09:00'
       ),
       (
           '018f6b7a-3000-7000-8000-000000000012',
@@ -379,8 +379,8 @@ INSERT INTO employees (
           '프로덕트 디자이너',
           DATE '2021-04-01',
           'RESIGNED',
-          TIMESTAMP '2026-05-03 09:10:00',
-          TIMESTAMP '2026-05-15 18:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-03 09:10:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-15 18:00:00+09:00'
       );
 
 -- =========================================================
@@ -402,7 +402,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0001',
           '초기 직원 등록',
           '127.0.0.1',
-          TIMESTAMP '2026-05-01 10:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:00:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000002',
@@ -410,7 +410,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0002',
           '초기 직원 등록',
           '127.0.0.1',
-          TIMESTAMP '2026-05-01 10:01:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:01:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000003',
@@ -418,7 +418,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0003',
           '초기 직원 등록',
           '127.0.0.1',
-          TIMESTAMP '2026-05-01 10:02:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:02:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000004',
@@ -426,7 +426,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0001',
           '직함 변경',
           '192.168.0.10',
-          TIMESTAMP '2026-05-10 11:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-10 11:00:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000005',
@@ -434,7 +434,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0003',
           '휴직 처리',
           '192.168.0.11',
-          TIMESTAMP '2026-05-12 14:30:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-12 14:30:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000006',
@@ -442,7 +442,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0005',
           '퇴사자 삭제 처리',
           '192.168.0.12',
-          TIMESTAMP '2026-05-13 17:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-13 17:00:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000007',
@@ -450,7 +450,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0008',
           '신규 입사자 등록',
           '192.168.0.13',
-          TIMESTAMP '2026-05-02 10:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:00:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000008',
@@ -458,7 +458,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0010',
           '휴직 처리',
           '192.168.0.20',
-          TIMESTAMP '2026-05-14 16:20:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-14 16:20:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000009',
@@ -466,7 +466,7 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0012',
           '퇴사자 삭제 처리',
           '192.168.0.21',
-          TIMESTAMP '2026-05-15 18:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-15 18:00:00+09:00'
       ),
       (
           '018f6b7a-4000-7000-8000-000000000010',
@@ -474,64 +474,64 @@ INSERT INTO employee_change_logs (
           'EMP-2026-0011',
           '개발팀 충원',
           '192.168.0.22',
-          TIMESTAMP '2026-05-03 09:00:00'
+          TIMESTAMP WITH TIME ZONE '2026-05-03 09:00:00+09:00'
       ),
-    (
-    '018f6b7a-4000-7000-8000-000000000011',
-    'CREATED',
-    'EMP-2026-0004',
-    '초기 직원 등록',
-    '127.0.0.1',
-    TIMESTAMP '2026-05-01 10:03:00'
-),
-(
-    '018f6b7a-4000-7000-8000-000000000012',
-    'CREATED',
-    'EMP-2026-0005',
-    '초기 직원 등록',
-    '127.0.0.1',
-    TIMESTAMP '2026-05-01 10:04:00'
-),
-(
-    '018f6b7a-4000-7000-8000-000000000013',
-    'CREATED',
-    'EMP-2026-0006',
-    '초기 직원 등록',
-    '127.0.0.1',
-    TIMESTAMP '2026-05-01 10:05:00'
-),
-(
-    '018f6b7a-4000-7000-8000-000000000014',
-    'CREATED',
-    'EMP-2026-0007',
-    '초기 직원 등록',
-    '127.0.0.1',
-    TIMESTAMP '2026-05-01 10:06:00'
-),
-(
-    '018f6b7a-4000-7000-8000-000000000015',
-    'CREATED',
-    'EMP-2026-0009',
-    '초기 직원 등록',
-    '127.0.0.1',
-    TIMESTAMP '2026-05-02 10:05:00'
-),
-(
-    '018f6b7a-4000-7000-8000-000000000016',
-    'CREATED',
-    'EMP-2026-0010',
-    '초기 직원 등록',
-    '127.0.0.1',
-    TIMESTAMP '2026-05-02 10:10:00'
-),
-(
-    '018f6b7a-4000-7000-8000-000000000017',
-    'CREATED',
-    'EMP-2026-0012',
-    '초기 직원 등록',
-    '127.0.0.1',
-    TIMESTAMP '2026-05-03 09:10:00'
-);
+      (
+          '018f6b7a-4000-7000-8000-000000000011',
+          'CREATED',
+          'EMP-2026-0004',
+          '초기 직원 등록',
+          '127.0.0.1',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:03:00+09:00'
+      ),
+      (
+          '018f6b7a-4000-7000-8000-000000000012',
+          'CREATED',
+          'EMP-2026-0005',
+          '초기 직원 등록',
+          '127.0.0.1',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:04:00+09:00'
+      ),
+      (
+          '018f6b7a-4000-7000-8000-000000000013',
+          'CREATED',
+          'EMP-2026-0006',
+          '초기 직원 등록',
+          '127.0.0.1',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:05:00+09:00'
+      ),
+      (
+          '018f6b7a-4000-7000-8000-000000000014',
+          'CREATED',
+          'EMP-2026-0007',
+          '초기 직원 등록',
+          '127.0.0.1',
+          TIMESTAMP WITH TIME ZONE '2026-05-01 10:06:00+09:00'
+      ),
+      (
+          '018f6b7a-4000-7000-8000-000000000015',
+          'CREATED',
+          'EMP-2026-0009',
+          '초기 직원 등록',
+          '127.0.0.1',
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:05:00+09:00'
+      ),
+      (
+          '018f6b7a-4000-7000-8000-000000000016',
+          'CREATED',
+          'EMP-2026-0010',
+          '초기 직원 등록',
+          '127.0.0.1',
+          TIMESTAMP WITH TIME ZONE '2026-05-02 10:10:00+09:00'
+      ),
+      (
+          '018f6b7a-4000-7000-8000-000000000017',
+          'CREATED',
+          'EMP-2026-0012',
+          '초기 직원 등록',
+          '127.0.0.1',
+          TIMESTAMP WITH TIME ZONE '2026-05-03 09:10:00+09:00'
+      );
 
 -- =========================================================
 -- 5. employee_change_diffs
@@ -612,12 +612,12 @@ INSERT INTO employee_change_diffs (
 -- 6. backup_histories
 -- 테스트 포인트:
 -- - status별 조회:
---   IN_PROGRESS, COMPLETED, FAILED, SKIPPED
+--   COMPLETED, FAILED, SKIPPED
 -- - 최근 완료 백업 조회
 -- - worker별 조회: system, IP
 -- - started_at/ended_at 정렬
 -- - file_id nullable:
---   IN_PROGRESS/SKIPPED는 file_id null 가능
+--   SKIPPED는 file_id null 가능
 -- - file_id unique:
 --   COMPLETED/FAILED는 서로 다른 files.id 참조
 -- =========================================================
@@ -628,56 +628,56 @@ INSERT INTO backup_histories (
       (
           '018f6b7a-6000-7000-8000-000000000001',
           'system',
-          TIMESTAMP '2026-05-15 09:00:00',
-          TIMESTAMP '2026-05-15 09:00:30',
+          TIMESTAMP WITH TIME ZONE '2026-05-15 09:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-15 09:00:30+09:00',
           'COMPLETED',
-          '018f6b7a-2000-7000-8000-000000000101'
+          NULL
       ),
       (
           '018f6b7a-6000-7000-8000-000000000002',
           '127.0.0.1',
-          TIMESTAMP '2026-05-15 10:00:00',
-          TIMESTAMP '2026-05-15 10:00:30',
+          TIMESTAMP WITH TIME ZONE '2026-05-15 10:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-15 10:00:30+09:00',
           'FAILED',
-          '018f6b7a-2000-7000-8000-000000000201'
+          NULL
       ),
       (
           '018f6b7a-6000-7000-8000-000000000003',
           'system',
-          TIMESTAMP '2026-05-15 11:00:00',
-          TIMESTAMP '2026-05-15 11:00:01',
+          TIMESTAMP WITH TIME ZONE '2026-05-15 11:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-15 11:00:01+09:00',
           'SKIPPED',
           NULL
       ),
       (
           '018f6b7a-6000-7000-8000-000000000004',
           'system',
-          TIMESTAMP '2026-05-16 09:00:00',
-          TIMESTAMP '2026-05-16 09:00:35',
+          TIMESTAMP WITH TIME ZONE '2026-05-16 09:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-16 09:00:35+09:00',
           'COMPLETED',
-          '018f6b7a-2000-7000-8000-000000000102'
+          NULL
       ),
       (
           '018f6b7a-6000-7000-8000-000000000005',
           '192.168.0.50',
-          TIMESTAMP '2026-05-17 03:00:00',
-          TIMESTAMP '2026-05-17 03:00:40',
+          TIMESTAMP WITH TIME ZONE '2026-05-17 03:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-17 03:00:40+09:00',
           'FAILED',
-          '018f6b7a-2000-7000-8000-000000000202'
+          NULL
       ),
       (
           '018f6b7a-6000-7000-8000-000000000006',
           'system',
-          TIMESTAMP '2026-05-17 04:00:00',
-          TIMESTAMP '2026-05-17 04:00:01',
+          TIMESTAMP WITH TIME ZONE '2026-05-17 04:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-17 04:00:01+09:00',
           'SKIPPED',
           NULL
       ),
       (
           '018f6b7a-6000-7000-8000-000000000007',
           'system',
-          TIMESTAMP '2026-05-18 09:00:00',
-          NULL,
-          'IN_PROGRESS',
+          TIMESTAMP WITH TIME ZONE '2026-05-18 09:00:00+09:00',
+          TIMESTAMP WITH TIME ZONE '2026-05-18 09:00:01+09:00',
+          'SKIPPED',
           NULL
       );

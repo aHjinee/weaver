@@ -131,4 +131,40 @@ public class BackupRepositoryImpl implements BackupRepositoryCustom {
             return sortValue;
         }
     }
+
+    @Override
+    public long countBackups(
+            String worker,
+            BackupStatus status,
+            Instant from,
+            Instant to
+    ) {
+        QBackupEntity backup = QBackupEntity.backupEntity;
+
+        BooleanBuilder condition = new BooleanBuilder();
+
+        if (worker != null && !worker.isBlank()) {
+            condition.and(backup.worker.contains(worker));
+        }
+
+        if (status != null) {
+            condition.and(backup.status.eq(status));
+        }
+
+        if (from != null) {
+            condition.and(backup.startedAt.goe(from));
+        }
+
+        if (to != null) {
+            condition.and(backup.startedAt.loe(to));
+        }
+
+        Long count = queryFactory
+                .select(backup.count())
+                .from(backup)
+                .where(condition)
+                .fetchOne();
+
+        return count == null ? 0L : count;
+    }
 }
