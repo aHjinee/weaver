@@ -1,5 +1,7 @@
 package com.sbproject.weaver.employee.service;
 
+import com.sbproject.weaver.changelog.entity.ChangeLogType;
+import com.sbproject.weaver.changelog.service.ChangeLogService;
 import com.sbproject.weaver.common.dto.CursorPageResponse;
 import com.sbproject.weaver.department.entity.Department;
 import com.sbproject.weaver.department.repository.DepartmentRepository;
@@ -19,6 +21,7 @@ import com.sbproject.weaver.employee.repository.EmployeeRepository;
 import com.sbproject.weaver.file.entity.FileEntity;
 import com.sbproject.weaver.file.service.FileService;
 import com.sbproject.weaver.file.type.FilePurpose;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +42,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final DepartmentRepository departmentRepository;
     private final EmployeeMapper employeeMapper;
     private final FileService fileService;
+    private final ChangeLogService changeLogService;
 
     @Override
-    public EmployeeDto create(EmployeeCreateRequest request, MultipartFile profile) {
+    public EmployeeDto create(EmployeeCreateRequest request, MultipartFile profile, HttpServletRequest httpRequest) {
         validateCreateRequest(request);
 
         if (employeeRepository.existsByEmail(request.getEmail())) {
@@ -67,6 +71,15 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .build();
 
         Employee savedEmployee = employeeRepository.save(employee);
+
+        changeLogService.save(
+                ChangeLogType.CREATED,
+                null,
+                savedEmployee,
+                request.getMemo(),
+                httpRequest
+        );
+
         return employeeMapper.toDto(savedEmployee);
     }
 
@@ -78,17 +91,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto update(UUID id, EmployeeUpdateRequest request, MultipartFile profile) {
-        if (request == null) {
-            throw new IllegalArgumentException("직원 수정 요청은 필수입니다.");
-        }
-
+    public EmployeeDto update(UUID id, EmployeeUpdateRequest request, MultipartFile profile, HttpServletRequest httpRequest) {
         Employee employee = getEmployeeOrThrow(id);
 
-        if (request.getEmail() != null
-                && !request.getEmail().equals(employee.getEmail())
-                && employeeRepository.existsByEmailAndIdNot(request.getEmail(), id)) {
-            throw new IllegalArgumentException("이미 사용 중인 이메일입니다. email = " + request.getEmail());
+        Employee beforeEmployee = Employee.builder()
+                .name(employee.getName())
+                .email(employee.getEmail())
+                .position(employee.getPosition())
+                .hireDate(employee.getHireDate())
+                .department(employee.getDepartment())
+                .status(employee.getStatus())
+                .employeeNumber(employee.getEmployeeNumber())
+                .profileImage(employee.getProfileImage())
+                .build();
+
+        if (request.getEmail() != null && !request.getEmail().equals(employee.getEmail())) {
+            if (employeeRepository.existsByEmail(request.getEmail())) {
+                throw new IllegalArgumentException("이미 사용 중인 이메일입니다. email = " + request.getEmail());
+            }
         }
 
         Department department = null;
@@ -118,13 +138,29 @@ public class EmployeeServiceImpl implements EmployeeService {
             }
         }
 
+        changeLogService.save(
+                ChangeLogType.UPDATED,
+                beforeEmployee,
+                employee,
+                request.getMemo(),
+                httpRequest
+        );
+
         return employeeMapper.toDto(employee);
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(UUID id, HttpServletRequest httpRequest) {
         Employee employee = getEmployeeOrThrow(id);
         FileEntity profileImage = employee.getProfileImage();
+
+        changeLogService.save(
+                ChangeLogType.DELETED,
+                employee,
+                null,
+                "직원 삭제",
+                httpRequest
+        );
 
         employeeRepository.delete(employee);
         employeeRepository.flush();

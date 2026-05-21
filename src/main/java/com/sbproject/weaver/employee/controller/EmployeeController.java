@@ -12,6 +12,7 @@ import com.sbproject.weaver.employee.dto.EmployeeTrendDto;
 import com.sbproject.weaver.employee.dto.EmployeeUpdateRequest;
 import com.sbproject.weaver.employee.entity.EmployeeStatus;
 import com.sbproject.weaver.employee.service.EmployeeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,10 +39,11 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<EmployeeDto> create(
+            HttpServletRequest httpRequest,
             @RequestPart("employee") EmployeeCreateRequest request,
             @RequestPart(value = "profile", required = false) MultipartFile profile
     ) {
-        EmployeeDto response = employeeService.create(request, profile);
+        EmployeeDto response = employeeService.create(request, profile, httpRequest);
         return ResponseEntity.ok(response);
     }
 
@@ -152,19 +154,21 @@ public class EmployeeController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<EmployeeDto> update(
+            HttpServletRequest httpRequest,
             @PathVariable UUID id,
             @RequestPart("employee") EmployeeUpdateRequest request,
             @RequestPart(value = "profile", required = false) MultipartFile profile
     ) {
-        EmployeeDto response = employeeService.update(id, request, profile);
+        EmployeeDto response = employeeService.update(id, request, profile, httpRequest);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
+            HttpServletRequest httpRequest,
             @PathVariable UUID id
     ) {
-        employeeService.delete(id);
+        employeeService.delete(id, httpRequest);
         return ResponseEntity.noContent().build();
     }
 }
