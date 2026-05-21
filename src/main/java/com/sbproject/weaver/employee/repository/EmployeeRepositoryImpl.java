@@ -330,24 +330,34 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
 
     private String formatPeriod(LocalDate date, String unit) {
         return switch (unit) {
-            case "day" -> date.toString();
+            case "day" -> "%d년 %d월 %d일".formatted(
+                    date.getYear(),
+                    date.getMonthValue(),
+                    date.getDayOfMonth()
+            );
 
             case "week" -> {
                 int week = date.get(WeekFields.ISO.weekOfWeekBasedYear());
                 int year = date.get(WeekFields.ISO.weekBasedYear());
-                yield "%d-W%02d".formatted(year, week);
+                yield "%d년 %d주차".formatted(year, week);
             }
 
-            case "month" -> "%d-%02d".formatted(date.getYear(), date.getMonthValue());
+            case "month" -> "%d년 %d월".formatted(
+                    date.getYear(),
+                    date.getMonthValue()
+            );
 
             case "quarter" -> {
                 int quarter = ((date.getMonthValue() - 1) / 3) + 1;
-                yield "%d-Q%d".formatted(date.getYear(), quarter);
+                yield "%d년 %d분기".formatted(date.getYear(), quarter);
             }
 
-            case "year" -> String.valueOf(date.getYear());
+            case "year" -> "%d년".formatted(date.getYear());
 
-            default -> "%d-%02d".formatted(date.getYear(), date.getMonthValue());
+            default -> "%d년 %d월".formatted(
+                    date.getYear(),
+                    date.getMonthValue()
+            );
         };
     }
 

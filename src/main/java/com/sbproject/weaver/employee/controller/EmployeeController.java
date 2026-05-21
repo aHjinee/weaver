@@ -113,10 +113,11 @@ public class EmployeeController {
         LocalDate resolvedFrom = from != null
                 ? from
                 : switch (unit) {
-            case "day" -> resolvedTo.minusMonths(1);
-            case "month" -> resolvedTo.minusYears(2);
-            case "quarter" -> resolvedTo.minusYears(5);
-            case "year" -> resolvedTo.minusYears(20);
+            case "day" -> resolvedTo.minusDays(25);
+            case "week" -> resolvedTo.minusDays(49);
+            case "month" -> resolvedTo.minusMonths(10);
+            case "quarter" -> resolvedTo.minusYears(2);
+            case "year" -> resolvedTo.minusYears(12);
             default -> resolvedTo.minusYears(1);
         };
 
