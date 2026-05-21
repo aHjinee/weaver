@@ -1,5 +1,6 @@
 package com.sbproject.weaver.changelog.entity;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,4 +33,11 @@ public class EmployeeChangeDiff {
     @Column(name = "after_value", columnDefinition = "text")
     private String afterValue;
 
-}
+        @PrePersist
+        public void prePersist() {
+            if (id == null) {
+                id = UuidCreator.getTimeOrderedEpoch();
+            }
+        }
+
+    }

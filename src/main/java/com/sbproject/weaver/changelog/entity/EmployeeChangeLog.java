@@ -44,15 +44,14 @@ public class EmployeeChangeLog {
     @Builder.Default
     private List<EmployeeChangeDiff> diffs = new ArrayList<>();
 
-    public static EmployeeChangeLog of(ChangeLogType type, String employeeNumber,
-                                       String memo, String ipAddress) {
-        return EmployeeChangeLog.builder()
-                .id(UuidCreator.getTimeOrderedEpoch())
-                .type(type)
-                .employeeNumber(employeeNumber)
-                .memo(memo)
-                .ipAddress(ipAddress)
-                .at(Instant.now())
-                .build();
+    @PrePersist
+    public void prePersist() {
+        if (id == null) {
+            id = UuidCreator.getTimeOrderedEpoch();
+        }
+
+        if (at == null) {
+            at = Instant.now().plusSeconds(60 * 60 * 9);
+        }
     }
 }

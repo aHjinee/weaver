@@ -1,6 +1,8 @@
 package com.sbproject.weaver.changelog.dto;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import com.sbproject.weaver.changelog.entity.ChangeLogType;
+import jakarta.persistence.PrePersist;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

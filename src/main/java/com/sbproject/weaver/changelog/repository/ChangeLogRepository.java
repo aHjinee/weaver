@@ -1,12 +1,10 @@
 package com.sbproject.weaver.changelog.repository;
 
-import com.sbproject.weaver.changelog.dto.ChangeLogSearchRequest;
-import com.sbproject.weaver.changelog.entity.ChangeLogType;
 import com.sbproject.weaver.changelog.entity.EmployeeChangeLog;
-import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ChangeLogRepository {
-    Slice<EmployeeChangeLog> search(String cursor, int size, ChangeLogSearchRequest search, ChangeLogType type);
+import java.util.UUID;
 
-    Long count(ChangeLogSearchRequest search, ChangeLogType type);
+public interface ChangeLogRepository extends JpaRepository<EmployeeChangeLog, UUID> {
+
 }

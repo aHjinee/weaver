@@ -12,9 +12,6 @@ public interface ChangeLogMapper {
 
     ChangeLogDto roResponse(EmployeeChangeLog entity);
 
-    //@Mapping(source = "diffs", target = "diffs")
-    //ChangeLogDetailResponse toDetailResponse(EmployeeChangeLog entity);
-
     @Mapping(source = "beforeValue", target = "before")
     @Mapping(source = "afterValue", target = "after")
     DiffDto toDiffDto(EmployeeChangeDiff diff);

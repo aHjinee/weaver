@@ -3,12 +3,12 @@ package com.sbproject.weaver.changelog.repository.impl;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sbproject.weaver.changelog.dto.ChangeLogCountCondition;
 import com.sbproject.weaver.changelog.dto.ChangeLogSearchRequest;
 import com.sbproject.weaver.changelog.entity.ChangeLogType;
 import com.sbproject.weaver.changelog.entity.EmployeeChangeLog;
-import com.sbproject.weaver.changelog.entity.QEmployeeChangeDiff;
 import com.sbproject.weaver.changelog.entity.QEmployeeChangeLog;
-import com.sbproject.weaver.changelog.repository.ChangeLogRepository;
+import com.sbproject.weaver.changelog.repository.ChangeLogRepositoryCustom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -16,65 +16,30 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class ChangeLogRepositoryImpl implements ChangeLogRepository {
+public class ChangeLogRepositoryImpl implements ChangeLogRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    private static final QEmployeeChangeDiff diff = QEmployeeChangeDiff.employeeChangeDiff;
     private static final QEmployeeChangeLog log = QEmployeeChangeLog.employeeChangeLog;
 
-    private static final QEmployeeChangeLog lodId = new QEmployeeChangeLog("log");
-
-    @Override
     public Slice<EmployeeChangeLog> search(String cursor, int size, ChangeLogSearchRequest search, ChangeLogType type) {
         BooleanBuilder where = new BooleanBuilder();
 
+        boolean isAsc = "asc".equalsIgnoreCase(search.getSortDirection());
+
         if (cursor != null) {
-            where.and(log.id.lt(UUID.fromString(cursor)));
-//            UUID cursorId = UUID.fromString(cursor);
-//            EmployeeChangeLog cursorRow = queryFactory
-//                    .selectFrom(log)
-//                    .where(log.id.eq(cursorId))
-//                    .fetchOne();
-//
-//            if (cursorRow != null) {
-//                boolean isAsc = "asc".equalsIgnoreCase(search.getSortDirection());
-//
-//                if ("ipAddress".equals(search.getSortField())) {
-//                    // ipAddress 정렬: (ipAddress, id) 복합 커서
-//                    String cursorIp = cursorRow.getIpAddress();
-//                    if (isAsc) {
-//                        where.and(
-//                                log.ipAddress.gt(cursorIp)
-//                                        .or(log.ipAddress.eq(cursorIp).and(log.id.gt(cursorId)))
-//                        );
-//                    } else {
-//                        where.and(
-//                                log.ipAddress.lt(cursorIp)
-//                                        .or(log.ipAddress.eq(cursorIp).and(log.id.gt(cursorId)))
-//                        );
-//                    }
-//                } else {
-//                    // at 정렬 (default): (at, id) 복합 커서
-//                    Instant cursorAt = cursorRow.getAt();
-//                    if (isAsc) {
-//                        where.and(
-//                                log.at.gt(cursorAt)
-//                                        .or(log.at.eq(cursorAt).and(log.id.gt(cursorId)))
-//                        );
-//                    } else {
-//                        where.and(
-//                                log.at.lt(cursorAt)
-//                                        .or(log.at.eq(cursorAt).and(log.id.gt(cursorId)))
-//                        );
-//                    }
-//                }
-//            }
+            if (isAsc) {
+                where.and(log.id.gt(UUID.fromString(cursor)));
+            } else {
+                where.and(log.id.lt(UUID.fromString(cursor)));
+            }
+
         }
 
         if (search.getEmployeeNumber() != null && !search.getEmployeeNumber().isBlank()) {
@@ -116,7 +81,6 @@ public class ChangeLogRepositoryImpl implements ChangeLogRepository {
         return new SliceImpl<>(rows, PageRequest.ofSize(size), hasNext);
     }
 
-    @Override
     public Long count(ChangeLogSearchRequest search, ChangeLogType type) {
         BooleanBuilder where = new BooleanBuilder();
 
@@ -150,6 +114,38 @@ public class ChangeLogRepositoryImpl implements ChangeLogRepository {
                 .select(log.count())
                 .from(log)
                 .where(where)
+                .fetchOne();
+
+        return count != null ? count : 0L;
+    }
+
+    @Override
+    public Long countLogs(ChangeLogCountCondition condition) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+            ZoneId KST = ZoneId.of("Asia/Seoul");
+
+            if (condition.getFrom() != null) {
+                Instant from = condition.getFrom()
+                        .atStartOfDay(KST)
+                        .toInstant();
+
+                builder.and(log.at.goe(from));
+            }
+
+            if (condition.getTo() != null) {
+                Instant to = condition.getTo()
+                        .plusDays(1)
+                        .atStartOfDay(KST)
+                        .minusNanos(1)
+                        .toInstant();
+
+                builder.and(log.at.loe(to));
+             }
+        Long count = queryFactory
+                .select(log.count())
+                .from(log)
+                .where(builder)
                 .fetchOne();
 
         return count != null ? count : 0L;
