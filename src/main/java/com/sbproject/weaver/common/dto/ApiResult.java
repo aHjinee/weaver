@@ -31,6 +31,7 @@ public class ApiResult<T> {
     @Schema(description = "응답 생성 시각 (UTC)", example = "2025-08-18T08:30:45.123Z")
     private Instant timestamp;
 
+
     public static <T> ApiResult<T> ok(T data) {
         return ApiResult.<T>builder()
                 .success(true)
