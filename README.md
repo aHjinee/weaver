@@ -71,7 +71,11 @@
 # ✨ 주요 기능
 
 ## 👥 직원 관리
-- 직원 등록 및 수정
+ ### 직원 등록 및 수정 <br>
+  <img height="400" style="width: auto; margin-right: 20px;" src="https://github.com/user-attachments/assets/831fd79b-1891-4051-b05d-9632644b0809" /> <br><br>
+  임시 이미지 설명 이미지 설명입니다 이미지 설명이 들어갑니다<br><br>
+  <img height="400" style="width: auto;" src="https://github.com/user-attachments/assets/6602d322-3f04-4d1d-815d-bf42ffe0e484" /> <br><br>
+  임시 이미지 설명 이미지 설명입니다 이미지 설명이 들어갑니다<br>
 - 직원 목록 및 상세 조회
 - 직원 삭제 처리
 - 직원 정보 관리
@@ -210,14 +214,16 @@ src
 ┃   ┗ static/assets
 ```
 <br>
----
+
 
 # 🌐 구현 홈페이지
 
+홈체이지 링크 자리
 <br><br><br>
 
 ---
 
 # 📝 프로젝트 회고록
 
+회고록 링크 자리
 <br><br><br>
