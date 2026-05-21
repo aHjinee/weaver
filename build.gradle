@@ -78,3 +78,7 @@ tasks.named('test') {
         delete file(querydslDir)
     }
 }
+
+bootJar {
+    archiveFileName = 'app.jar'
+}
