@@ -8,10 +8,10 @@ spring:
       on-profile: prod
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/my_blog
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/my_blog}
     driver-class-name: org.postgresql.Driver
-    username: user1
-    password: 1234
+    username: ${DATABASE_USERNAME:user1}
+    password: ${DATABASE_PASSWORD:1234}
 
   jpa:
     hibernate:
@@ -26,3 +26,6 @@ logging:
     org.hibernate.SQL: off
     org.hibernate.orm.jdbc.bind: off
     org.springframework.web: info
+
+server:
+  port: ${PORT:8080}
