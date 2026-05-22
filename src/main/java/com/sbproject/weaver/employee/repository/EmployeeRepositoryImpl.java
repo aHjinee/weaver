@@ -260,7 +260,10 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
             Long currentEmployeeCountResult = queryFactory
                     .select(employee.count())
                     .from(employee)
-                    .where(employee.hireDate.loe(periodEnd))
+                    .where(
+                            employee.hireDate.loe(periodEnd),
+                            employee.status.ne(EmployeeStatus.RESIGNED)
+                    )
                     .fetchOne();
 
             long currentEmployeeCount = currentEmployeeCountResult != null
