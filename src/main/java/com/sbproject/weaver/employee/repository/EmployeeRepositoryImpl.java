@@ -6,6 +6,9 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sbproject.weaver.changelog.entity.ChangeLogType;
+import com.sbproject.weaver.changelog.entity.QEmployeeChangeDiff;
+import com.sbproject.weaver.changelog.entity.QEmployeeChangeLog;
 import com.sbproject.weaver.common.dto.CursorPageResponse;
 import com.sbproject.weaver.department.entity.QDepartment;
 import com.sbproject.weaver.employee.dto.*;
@@ -15,7 +18,9 @@ import com.sbproject.weaver.employee.entity.QEmployee;
 import com.sbproject.weaver.file.entity.QFileEntity;
 import lombok.RequiredArgsConstructor;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
@@ -230,6 +235,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
     @Override
     public List<EmployeeTrendDto> getTrend(EmployeeTrendCondition condition) {
         QEmployee employee = QEmployee.employee;
+        QEmployeeChangeLog changeLog = QEmployeeChangeLog.employeeChangeLog;
+        QEmployeeChangeDiff diff = QEmployeeChangeDiff.employeeChangeDiff;
 
         LocalDate from = condition.getFrom();
         LocalDate to = condition.getTo();
@@ -241,6 +248,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
         boolean first = true;
 
         LocalDate current = alignStartDate(from, unit);
+        Instant toExclusive = toExclusiveInstant(to);
 
         while (!current.isAfter(to)) {
             LocalDate periodEnd = getPeriodEnd(current, unit);
@@ -249,13 +257,35 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
                 periodEnd = to;
             }
 
-            Long countResult = queryFactory
+            Long currentEmployeeCountResult = queryFactory
                     .select(employee.count())
                     .from(employee)
                     .where(employee.hireDate.loe(periodEnd))
                     .fetchOne();
 
-            long count = countResult != null ? countResult : 0L;
+            long currentEmployeeCount = currentEmployeeCountResult != null
+                    ? currentEmployeeCountResult
+                    : 0L;
+
+            Instant periodEndExclusive = toExclusiveInstant(periodEnd);
+
+            long deletedAfterPeriod = countDeletedEmployeesExistingAt(
+                    changeLog,
+                    diff,
+                    periodEnd,
+                    periodEndExclusive,
+                    toExclusive
+            );
+
+            long createdAfterPeriod = countCreatedEmployeesNotExistingAt(
+                    changeLog,
+                    diff,
+                    periodEnd,
+                    periodEndExclusive,
+                    toExclusive
+            );
+
+            long count = currentEmployeeCount + deletedAfterPeriod - createdAfterPeriod;
 
             long change = first ? 0L : count - previousCount;
 
@@ -360,6 +390,62 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom {
             );
         };
     }
+
+    private long countDeletedEmployeesExistingAt(
+            QEmployeeChangeLog changeLog,
+            QEmployeeChangeDiff diff,
+            LocalDate periodEnd,
+            Instant periodEndExclusive,
+            Instant toExclusive
+    ) {
+        Long count = queryFactory
+                .select(diff.count())
+                .from(diff)
+                .join(diff.changeLog, changeLog)
+                .where(
+                        changeLog.type.eq(ChangeLogType.DELETED),
+                        changeLog.at.goe(periodEndExclusive),
+                        changeLog.at.lt(toExclusive),
+                        diff.propertyName.eq("hireDate"),
+                        diff.beforeValue.isNotNull(),
+                        diff.beforeValue.loe(periodEnd.toString())
+                )
+                .fetchOne();
+
+        return count != null ? count : 0L;
+    }
+
+    private long countCreatedEmployeesNotExistingAt(
+            QEmployeeChangeLog changeLog,
+            QEmployeeChangeDiff diff,
+            LocalDate periodEnd,
+            Instant periodEndExclusive,
+            Instant toExclusive
+    ) {
+        Long count = queryFactory
+                .select(diff.count())
+                .from(diff)
+                .join(diff.changeLog, changeLog)
+                .where(
+                        changeLog.type.eq(ChangeLogType.CREATED),
+                        changeLog.at.goe(periodEndExclusive),
+                        changeLog.at.lt(toExclusive),
+                        diff.propertyName.eq("hireDate"),
+                        diff.afterValue.isNotNull(),
+                        diff.afterValue.loe(periodEnd.toString())
+                )
+                .fetchOne();
+
+        return count != null ? count : 0L;
+    }
+
+    private Instant toExclusiveInstant(LocalDate date) {
+        return date.plusDays(1)
+                .atStartOfDay(ZoneId.of("Asia/Seoul"))
+                .toInstant();
+    }
+
+
 
     @Override
     public Long countEmployees(EmployeeCountCondition condition) {
